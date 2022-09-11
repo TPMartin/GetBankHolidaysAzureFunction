@@ -15,15 +15,15 @@ namespace GetBankHolidaysAzureFunction
     public class GetBankHolidays
     {
         const string endpoint = "https://www.gov.uk/bank-holidays.json";
-        DateTime _lastCheck;
-        List<DateTime> bankHolidays = new List<DateTime>();
+        private static DateTime _lastCheck;
+        static List<DateTime> bankHolidays = new List<DateTime>();
 
         [FunctionName("GetBankHolidays")]
-        public async Task RunAsync([TimerTrigger("0,5 8-17 * * Mon-Fri")]TimerInfo myTimer, ILogger log)
+        public async Task RunAsync([TimerTrigger("*/5 8-17 * * Mon-Fri")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
-            if (_lastCheck > DateTime.Now.AddDays(-1))
+            if (DateTime.Now > _lastCheck.AddDays(1))
             {
                 using (HttpClient client = new HttpClient())
                 {
